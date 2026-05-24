@@ -41,6 +41,3 @@ The review file must include, at minimum:
 If the repo has no E2E framework wired and you stop at the proposal step, say so explicitly in the Summary and produce a one-page plan for how Playwright would be added — do not pretend to have run tests you did not run.
 
 ## Lessons (append-only)
-
-<!-- Lessons learned during real reviews get appended here by the persona itself.
-     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->

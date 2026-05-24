@@ -27,6 +27,3 @@ Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything 
 **Even when you find nothing**, do not write a one-line "no findings" report. Briefly list what you *checked* and *ruled out* — query patterns, allocations, payload sizes, render paths — so the reader can trust the pass.
 
 ## Lessons (append-only)
-
-<!-- Lessons learned during real reviews get appended here by the persona itself.
-     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->

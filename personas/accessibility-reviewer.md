@@ -26,6 +26,3 @@ Style polish, business logic, performance.
 Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything that blocks a screen-reader user from completing the flow, **High** for keyboard traps, **Medium** for WCAG AA failures that have workarounds, **Low** for AAA / nice-to-have.
 
 ## Lessons (append-only)
-
-<!-- Lessons learned during real reviews get appended here by the persona itself.
-     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->

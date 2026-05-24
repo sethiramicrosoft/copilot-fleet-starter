@@ -29,6 +29,3 @@ Architecture (architect handles that), security, perf.
 Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for code I cannot understand without asking a teammate, **High** for confusing names, **Medium** for missing docs, **Low** for taste.
 
 ## Lessons (append-only)
-
-<!-- Lessons learned during real reviews get appended here by the persona itself.
-     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->

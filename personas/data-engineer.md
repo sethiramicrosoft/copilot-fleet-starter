@@ -25,6 +25,3 @@ UI, style, controller-level code.
 Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything that will require downtime to fix, **High** for anything that risks data loss or corruption, **Medium** for performance under growth, **Low** for hygiene.
 
 ## Lessons (append-only)
-
-<!-- Lessons learned during real reviews get appended here by the persona itself.
-     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->

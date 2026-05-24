@@ -28,6 +28,3 @@ Micro-style, security (other personas), test syntax.
 Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything that will block a future release, **High** for "we will regret this within a quarter", **Medium** for "worth fixing now while it is cheap", **Low** for taste.
 
 ## Lessons (append-only)
-
-<!-- Lessons learned during real reviews get appended here by the persona itself.
-     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->

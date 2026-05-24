@@ -29,6 +29,3 @@ Code quality, security, performance.
 Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything that will cause support tickets, **High** for confusion, **Medium** for inconsistency, **Low** for polish.
 
 ## Lessons (append-only)
-
-<!-- Lessons learned during real reviews get appended here by the persona itself.
-     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->

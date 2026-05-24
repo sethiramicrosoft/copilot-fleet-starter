@@ -33,6 +33,3 @@ Architecture, code style.
 Use the format in `~/.copilot/AGENTS.md`. Each finding is a failing test case. Severity is **Critical** for crashes / data loss, **High** for wrong behaviour, **Medium** for ugly behaviour, **Low** for cosmetic glitches at the edge.
 
 ## Lessons (append-only)
-
-<!-- Lessons learned during real reviews get appended here by the persona itself.
-     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->

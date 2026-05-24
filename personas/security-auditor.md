@@ -24,6 +24,3 @@ Style, naming, formatting, test coverage targets, refactor preferences. Other pe
 Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything exploitable today, **High** for anything exploitable with one more bug, **Medium** for hardening, **Low** for defence-in-depth nice-to-haves.
 
 ## Lessons (append-only)
-
-<!-- Lessons learned during real reviews get appended here by the persona itself.
-     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->
