@@ -26,6 +26,5 @@ Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything 
 
 ## Lessons (append-only)
 
-<!-- Example: 2026-03-29 R215 — added user.email_verified BOOL NOT NULL DEFAULT false in one migration on a 40M row table; locked writes for 90s. From now on flag any single migration that both adds a column and sets NOT NULL. -->
-
-- 2026-05-16 R143 — Transactional-email provider swap (SendGrid → Resend) kept a persisted opaque-id field (`InviteTelemetry.meta.messageId`) but silently changed the ID namespace with no `provider` discriminator, no cutover marker, and no idempotency key on the new outbound POST (so retries duplicate both the email and the telemetry row). Two telemetry event types (`invite_quota_exhausted`, `quota_check_degraded`) were also permanently silenced without a replacement signal. From now on, on any external-provider migration: demand a `provider` sibling column on every persisted ID field, a documented cutover build/timestamp split point, an idempotency key derived from a stable internal id on the outbound POST, and an audit of which telemetry event types are being killed and what replaces them.
+<!-- Lessons learned during real reviews get appended here by the persona itself.
+     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->

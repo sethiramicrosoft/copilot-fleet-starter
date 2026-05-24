@@ -27,4 +27,5 @@ Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything 
 
 ## Lessons (append-only)
 
-<!-- Example: 2026-02-19 R193 — new dropdown was built with div+onClick, completely invisible to keyboard. Flag any clickable element that is not <button>, <a>, or has role+tabIndex+keydown. -->
+<!-- Lessons learned during real reviews get appended here by the persona itself.
+     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->

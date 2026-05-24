@@ -42,4 +42,5 @@ If the repo has no E2E framework wired and you stop at the proposal step, say so
 
 ## Lessons (append-only)
 
-<!-- Example: 2026-04-11 R222 — "Save" button stayed enabled after a failed save; rapid double-click caused two records. From now on, always include a double-click test on every primary action button in a form. -->
+<!-- Lessons learned during real reviews get appended here by the persona itself.
+     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->

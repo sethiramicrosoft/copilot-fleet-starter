@@ -30,5 +30,5 @@ Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for code I ca
 
 ## Lessons (append-only)
 
-<!-- Example: 2026-03-04 R204 — function called handleAttendance() actually wrote to three tables. Flag any handle*/process*/manage* function whose body has more than one side effect. -->
-
+<!-- Lessons learned during real reviews get appended here by the persona itself.
+     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->

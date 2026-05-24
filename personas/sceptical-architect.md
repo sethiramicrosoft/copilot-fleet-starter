@@ -29,6 +29,5 @@ Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything 
 
 ## Lessons (append-only)
 
-<!-- Example: 2026-01-22 R175 — feature flag was checked inside the domain layer instead of the edge; pushed flag logic into business rules. Flag any FeatureFlag.is_on() call below the controller layer. -->
-- 2026-05-19 R229b — fat route file (`aiRoutes.js`, 6.4k lines, ~20 inline `${config.baseIdentity}` template literals) had a fresh enrichment bolted in instead of extracting a `buildXxxPrompt(ctx)` per endpoint. Flag any new AI route change that adds another inline template literal without an accompanying prompt-builder module; the third occurrence of the pattern is the cue to extract.
-- 2026-05-16 R143 — vendor migration (SendGrid → Resend) left dead vendor-named exports (`getSendGridUsagePct`, `_lastQuotaWasDegraded`, `SENDGRID_DAILY_MAX`) and an inline provider URL in a route file as "back-compat" shims with no external consumer. The function-level abstraction (`sendEmail(...)`) did its job; the regret is the residue, not the missing `EmailProvider` interface. Flag any vendor-swap diff that keeps a function or env var named after the *old* vendor when all callers are in-tree — that is a same-commit rename/delete, not a follow-up ticket. Corollary: do not invent an interface to "fix" a coupling that the existing function signature already absorbed.
+<!-- Lessons learned during real reviews get appended here by the persona itself.
+     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->

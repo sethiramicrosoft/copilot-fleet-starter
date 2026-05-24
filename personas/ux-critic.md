@@ -30,4 +30,5 @@ Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything 
 
 ## Lessons (append-only)
 
-<!-- Example: 2026-04-02 R220 — "Sync failed" error had no next step; users restarted the app and lost work. Flag any error message that doesn't end with a verb the user can act on. -->
+<!-- Lessons learned during real reviews get appended here by the persona itself.
+     Format: - YYYY-MM-DD <ticket> — <one-liner pattern to watch for next time> -->
