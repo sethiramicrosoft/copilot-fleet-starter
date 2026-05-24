@@ -16,7 +16,8 @@ A reference setup for running a **persistent fleet of reviewer personas** on top
     ├── ux-critic.md
     ├── accessibility-reviewer.md
     ├── new-engineer.md
-    └── qa-saboteur.md
+    ├── qa-saboteur.md         ← writes & runs real failing tests when a runner is wired
+    └── e2e-tester.md          ← drives Playwright, launches the app, iterates until green
 ```
 
 Plus `repo-overlay/.github/copilot-instructions.md` — an example of repo-specific overrides you can drop into any project.
@@ -32,7 +33,8 @@ Plus `repo-overlay/.github/copilot-instructions.md` — an example of repo-speci
 - `/model`, `/plan`, `/add-dir`, Autopilot, auto-compaction
 
 **What this repo adds on top (discipline layer):**
-- A standing cast of eight named personas instead of inventing roles each time
+- A standing cast of nine named personas instead of inventing roles each time
+- Two of those personas (`qa-saboteur`, `e2e-tester`) actually execute tests — Jest / Playwright — rather than only reviewing code
 - A model-per-persona table so assignment is decided once
 - A convention that each persona appends lessons learned back into its own file
 - A `reviews/<ticket>-<persona>.md` output convention so reviews survive the session
@@ -74,7 +76,16 @@ or run `/init` to generate one from scratch.
 Use the model pinned in AGENTS.md. Write each review to reviews/<ticket>-<persona>.md.
 ```
 
-Five to eight reviews land in `reviews/` in ~4 minutes, in parallel. Read them, pick what is real, ask the orchestrator to apply the fixes.
+Five to nine reviews land in `reviews/` in ~3–5 minutes, in parallel. Read them, pick what is real, ask the orchestrator to apply the fixes.
+
+### Going past static review — launch the app
+
+`qa-saboteur` and `e2e-tester` are the two personas that don't stop at reading the diff:
+
+- **qa-saboteur** — if a Jest / Vitest / Pytest runner is wired in the repo, it writes failing tests for the edge cases the diff missed and runs them. Output is real test files + a pass/fail summary, not prose.
+- **e2e-tester** — if Playwright is configured, it launches the actual app (local dev server or a deployed environment), drives the user journey the ticket claims to deliver, captures screenshots / traces, and iterates until the journey is green or it has hard evidence of a bug.
+
+Wire either runner once per repo and the personas pick it up automatically on the next `/fleet` run.
 
 ## References (GitHub docs)
 

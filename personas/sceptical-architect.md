@@ -27,3 +27,4 @@ Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything 
 ## Lessons (append-only)
 
 <!-- Example: 2026-01-22 R175 — feature flag was checked inside the domain layer instead of the edge; pushed flag logic into business rules. Flag any FeatureFlag.is_on() call below the controller layer. -->
+- 2026-05-19 R229b — fat route file (`aiRoutes.js`, 6.4k lines, ~20 inline `${config.baseIdentity}` template literals) had a fresh enrichment bolted in instead of extracting a `buildXxxPrompt(ctx)` per endpoint. Flag any new AI route change that adds another inline template literal without an accompanying prompt-builder module; the third occurrence of the pattern is the cue to extract.
