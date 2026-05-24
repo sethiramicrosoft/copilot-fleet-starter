@@ -35,3 +35,4 @@ Use the format in `~/.copilot/AGENTS.md`. Each finding is a failing test case. S
 ## Lessons (append-only)
 
 <!-- Example: 2026-04-19 R225 — scheduling UI crashed when the user picked a date in their local TZ that didn't exist after DST. Always include a DST-transition test for any date picker. -->
+- 2026-05-24 R143 — bulk-recipient mailers need an explicit array-shape test; string-only happy paths let nested `to` payload bugs slip through.

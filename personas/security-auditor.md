@@ -27,3 +27,5 @@ Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything 
 
 <!-- Append one line per review when a real bug teaches a new pattern. -->
 <!-- Example: 2026-03-11 R198 — tokens were being logged via structured logger's "context" param; flag any logger.with(...) call that takes a request object directly. -->
+
+- 2026-05-24 R143 — when a provider migration stubs usage checks (e.g., returns constant 0), treat any remaining quota guard clauses as dead code and require a replacement global backpressure control (not only per-user limits).

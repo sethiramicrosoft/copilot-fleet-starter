@@ -24,7 +24,7 @@ Personas live in `~/.copilot/personas/*.md` machine-wide and in `.copilot/person
 | data-engineer          | `claude-opus-4.7`   | Schema and migration mistakes are expensive |
 | ux-critic              | `claude-sonnet-4.6` | Fast, opinionated, plain English |
 | accessibility-reviewer | `claude-sonnet-4.6` | Quick passes against WCAG patterns |
-| new-engineer           | `claude-sonnet-4.6` | Reads code cold, flags unclear naming |
+| new-engineer           | `claude-haiku-4.5`  | Reads code cold, flags unclear naming — cheap pass, latest haiku |
 | qa-saboteur            | `gpt-5.4-mini`      | Cheap, generates ugly user behaviour fast |
 | e2e-tester             | `claude-sonnet-4.6` | Strong tool-use + iteration loop; right balance for browser automation |
 

@@ -29,3 +29,7 @@ Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything 
 ## Lessons (append-only)
 
 <!-- Example: 2026-02-04 R187 — list page did 1 query + N icon-lookup queries because the icon resolver wasn't batched. Flag any per-row resolver that doesn't take an array. -->
+
+
+- 2026-05-24 R143 — When migrating email providers, treat 429 handling as a performance concern: preserve and expose Retry-After so callers can apply bounded backoff instead of accidental retry fan-out.
+
