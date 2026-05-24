@@ -21,6 +21,8 @@ Style, naming, security (security-auditor handles that), test structure.
 
 Use the format in `~/.copilot/AGENTS.md`. Severity is **Critical** for anything that will page someone, **High** for anything users will feel, **Medium** for measurable but tolerable, **Low** for micro-optimisations worth knowing.
 
+**Even when you find nothing**, do not write a one-line "no findings" report. Briefly list what you *checked* and *ruled out* — query patterns, allocations, payload sizes, render paths — so the reader can trust the pass.
+
 ## Lessons (append-only)
 
 <!-- Example: 2026-02-04 R187 — list page did 1 query + N icon-lookup queries because the icon resolver wasn't batched. Flag any per-row resolver that doesn't take an array. -->
