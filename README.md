@@ -23,7 +23,7 @@ A reference setup for running a **persistent fleet of reviewer personas** on top
 
 Plus `repo-overlay/.github/copilot-instructions.md` — an example of repo-specific overrides you can drop into any project.
 
-## What is GHCP CLI vs what this adds
+## What is in GHCP CLI vs what this adds
 
 **Built into GHCP CLI (documented features):**
 - `~/.copilot/copilot-instructions.md` auto-loaded for every session
