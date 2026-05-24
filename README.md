@@ -93,6 +93,50 @@ Wire either runner once per repo and the personas pick it up automatically on th
 - [Fleet](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/fleet)
 - [Autopilot](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/autopilot)
 
+## What actually happens when you fire `/fleet`
+
+Most people picture `/fleet` as "the session switches model N times in sequence." It isn't. Each persona runs in its own isolated context window on its own pinned model, in true parallel:
+
+```
+You ──► Orchestrator session (your /model, e.g. Sonnet 4.6)
+            │
+            │  reads AGENTS.md model table
+            │  spawns N sub-agents in parallel
+            │
+            ├──► sub-agent: security-auditor    → claude-opus-4.7      ──┐
+            ├──► sub-agent: sceptical-architect → claude-opus-4.7      ──┤
+            ├──► sub-agent: performance-reviewer→ gpt-5.3-codex        ──┤
+            ├──► sub-agent: data-engineer       → gpt-5.3-codex        ──┤  all
+            ├──► sub-agent: ux-critic           → claude-sonnet-4.6    ──┤ running
+            ├──► sub-agent: accessibility       → claude-sonnet-4.6    ──┤  at the
+            ├──► sub-agent: new-engineer        → claude-haiku-4.5     ──┤  same
+            ├──► sub-agent: qa-saboteur         → gpt-5.3-codex        ──┤  time
+            └──► sub-agent: e2e-tester          → claude-opus-4.7      ──┘
+                                                          │
+                                                          ▼
+                                              each writes its review to
+                                              reviews/<ticket>-<persona>.md
+                                                          │
+            ┌─────────────────────────────────────────────┘
+            ▼
+       Orchestrator collects results, shows you a summary
+```
+
+### What this means in practice
+
+| Property | Behaviour |
+|---|---|
+| **Model selection** | Each sub-agent process is launched with its pinned model from AGENTS.md. The orchestrator's own model is unaffected. |
+| **Context isolation** | Each sub-agent has its own clean context window. The security auditor doesn't see what the UX critic is thinking, and vice versa. This is deliberate — it prevents groupthink. The triangulation effect (3 personas independently finding the same bug) only works because contexts are isolated. |
+| **Parallelism** | True parallel, not round-robin. 9 personas don't take 9× one-persona time; they take ~max(individual times). Last live run: 5 personas → 2:50 wall clock vs. ~12 min if serial. |
+| **Failure isolation** | If Opus is rate-limited that minute, only the architect/security/e2e sub-agents fail. The others complete. You can re-run just the failed ones. |
+| **Cost** | Each sub-agent burns its own tokens at its own model's pricing. Opus calls cost Opus rates, Haiku calls cost Haiku rates. The cost math is what makes the model table valuable — you don't pay Opus for what Haiku can do. |
+| **Token bloat in main session** | Zero — sub-agents don't dump their full work into your main context. Only a brief summary lands in your session. This is why you can run `/fleet` 5× in one session without auto-compaction firing. |
+
+### What makes the model table *actually* binding
+
+The model table in `AGENTS.md` is only honoured automatically because `copilot-instructions.md` includes a hard rule that says *"on every persona invocation — fleet OR single — look up the pinned model in AGENTS.md first."* Without that rule, single-persona calls silently fall through to whatever `/model` happens to be active. With it, you can just say *"review architecture using sceptical-architect"* and the orchestrator will switch to Opus 4.7 before responding. See `copilot-instructions.md` in this repo.
+
 ## License
 
 MIT. Fork, copy, rewrite the personas to match your team.
