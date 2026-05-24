@@ -13,7 +13,8 @@ A reference setup for running a **persistent fleet of reviewer personas** on top
     ├── performance-reviewer.md
     ├── sceptical-architect.md
     ├── data-engineer.md
-    ├── ux-critic.md
+    ├── ux-ui-researcher.md    ← designs the screen BEFORE code (pre-build)
+    ├── ux-critic.md           ← critiques the built UI (post-build)
     ├── accessibility-reviewer.md
     ├── new-engineer.md
     ├── qa-saboteur.md         ← writes & runs real failing tests when a runner is wired
@@ -33,7 +34,7 @@ Plus `repo-overlay/.github/copilot-instructions.md` — an example of repo-speci
 - `/model`, `/plan`, `/add-dir`, Autopilot, auto-compaction
 
 **What this repo adds on top (discipline layer):**
-- A standing cast of nine named personas instead of inventing roles each time
+- A standing cast of ten named personas instead of inventing roles each time
 - Two of those personas (`qa-saboteur`, `e2e-tester`) actually execute tests — Jest / Playwright — rather than only reviewing code
 - A model-per-persona table so assignment is decided once
 - A convention that each persona appends lessons learned back into its own file
@@ -76,7 +77,7 @@ or run `/init` to generate one from scratch.
 Use the model pinned in AGENTS.md. Write each review to reviews/<ticket>-<persona>.md.
 ```
 
-Five to nine reviews land in `reviews/` in ~3–5 minutes, in parallel. Read them, pick what is real, ask the orchestrator to apply the fixes.
+Five to ten reviews land in `reviews/` in ~3–5 minutes, in parallel. Read them, pick what is real, ask the orchestrator to apply the fixes.
 
 ### Going past static review — launch the app
 
@@ -103,15 +104,16 @@ You ──► Orchestrator session (your /model, e.g. Sonnet 4.6)
             │  reads AGENTS.md model table
             │  spawns N sub-agents in parallel
             │
-            ├──► sub-agent: security-auditor    → claude-opus-4.7      ──┐
-            ├──► sub-agent: sceptical-architect → claude-opus-4.7      ──┤
+            ├──► sub-agent: security-auditor    → gpt-5.3-codex        ──┐
             ├──► sub-agent: performance-reviewer→ gpt-5.3-codex        ──┤
-            ├──► sub-agent: data-engineer       → gpt-5.3-codex        ──┤  all
-            ├──► sub-agent: ux-critic           → claude-sonnet-4.6    ──┤ running
-            ├──► sub-agent: accessibility       → claude-sonnet-4.6    ──┤  at the
-            ├──► sub-agent: new-engineer        → claude-haiku-4.5     ──┤  same
-            ├──► sub-agent: qa-saboteur         → gpt-5.3-codex        ──┤  time
-            └──► sub-agent: e2e-tester          → claude-opus-4.7      ──┘
+            ├──► sub-agent: sceptical-architect → claude-opus-4.7      ──┤
+            ├──► sub-agent: data-engineer       → claude-opus-4.7      ──┤  all
+            ├──► sub-agent: ux-ui-researcher    → claude-opus-4.7      ──┤ running
+            ├──► sub-agent: ux-critic           → claude-sonnet-4.6    ──┤  at the
+            ├──► sub-agent: accessibility       → claude-sonnet-4.6    ──┤  same
+            ├──► sub-agent: new-engineer        → claude-haiku-4.5     ──┤  time
+            ├──► sub-agent: qa-saboteur         → gpt-5.4-mini         ──┤
+            └──► sub-agent: e2e-tester          → claude-sonnet-4.6    ──┘
                                                           │
                                                           ▼
                                               each writes its review to
@@ -128,7 +130,7 @@ You ──► Orchestrator session (your /model, e.g. Sonnet 4.6)
 |---|---|
 | **Model selection** | Each sub-agent process is launched with its pinned model from AGENTS.md. The orchestrator's own model is unaffected. |
 | **Context isolation** | Each sub-agent has its own clean context window. The security auditor doesn't see what the UX critic is thinking, and vice versa. This is deliberate — it prevents groupthink. The triangulation effect (3 personas independently finding the same bug) only works because contexts are isolated. |
-| **Parallelism** | True parallel, not round-robin. 9 personas don't take 9× one-persona time; they take ~max(individual times). Last live run: 5 personas → 2:50 wall clock vs. ~12 min if serial. |
+| **Parallelism** | True parallel, not round-robin. 10 personas don't take 10× one-persona time; they take ~max(individual times). Last live run: 5 personas → 2:22 wall clock vs. ~12 min if serial. |
 | **Failure isolation** | If Opus is rate-limited that minute, only the architect/security/e2e sub-agents fail. The others complete. You can re-run just the failed ones. |
 | **Cost** | Each sub-agent burns its own tokens at its own model's pricing. Opus calls cost Opus rates, Haiku calls cost Haiku rates. The cost math is what makes the model table valuable — you don't pay Opus for what Haiku can do. |
 | **Token bloat in main session** | Zero — sub-agents don't dump their full work into your main context. Only a brief summary lands in your session. This is why you can run `/fleet` 5× in one session without auto-compaction firing. |

@@ -8,6 +8,7 @@ Personas live in `~/.copilot/personas/*.md` machine-wide and in `.copilot/person
 - `performance-reviewer` — N+1, allocations, wasted renders
 - `sceptical-architect` — pushes back on design, names the regret
 - `data-engineer` — schema, migrations, data contracts
+- `ux-ui-researcher` — designs the screen before code (user, job-to-be-done, wireframe)
 - `ux-critic` — plain English, what is confusing
 - `accessibility-reviewer` — WCAG, keyboard, screen reader
 - `new-engineer` — reads cold, flags unclear naming
@@ -22,6 +23,7 @@ Personas live in `~/.copilot/personas/*.md` machine-wide and in `.copilot/person
 | performance-reviewer   | `gpt-5.3-codex`     | Catches N+1, wasted renders, allocation hotspots |
 | sceptical-architect    | `claude-opus-4.7`   | Deepest reasoning, pushes back hardest on design |
 | data-engineer          | `claude-opus-4.7`   | Schema and migration mistakes are expensive |
+| ux-ui-researcher       | `claude-opus-4.7`   | Design decisions are expensive to undo; needs deepest reasoning |
 | ux-critic              | `claude-sonnet-4.6` | Fast, opinionated, plain English |
 | accessibility-reviewer | `claude-sonnet-4.6` | Quick passes against WCAG patterns |
 | new-engineer           | `claude-haiku-4.5`  | Reads code cold, flags unclear naming — cheap pass, latest haiku |
@@ -30,7 +32,7 @@ Personas live in `~/.copilot/personas/*.md` machine-wide and in `.copilot/person
 
 ## When to dispatch the fleet
 
-- **Before code:** send the spec to `sceptical-architect`, `ux-critic`, and one domain persona (e.g. `data-engineer` if it touches storage). Argue, refine, then build.
+- **Before code:** send the spec to `ux-ui-researcher`, `sceptical-architect`, and one domain persona (e.g. `data-engineer` if it touches storage). Argue, refine, then build. `ux-critic` is post-build and does not run here.
 - **After code, before beta merge:** default fleet is `security-auditor`, `performance-reviewer`, `new-engineer`. Add `data-engineer` if the diff touches migrations or schemas. Add `ux-critic` and `accessibility-reviewer` if it touches anything user-facing. Add `qa-saboteur` before any release.
 - **Before merge to main / production:** also run `e2e-tester` — it launches the app, drives Playwright through the affected user journeys, captures screenshots, and iterates until the suite is green. This is the "did it actually work for a user?" gate, not just "did the code review pass?".
 
