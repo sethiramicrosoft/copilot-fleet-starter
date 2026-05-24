@@ -11,7 +11,8 @@ Personas live in `~/.copilot/personas/*.md` machine-wide and in `.copilot/person
 - `ux-critic` — plain English, what is confusing
 - `accessibility-reviewer` — WCAG, keyboard, screen reader
 - `new-engineer` — reads cold, flags unclear naming
-- `qa-saboteur` — ugly user behaviour, edge cases at volume
+- `qa-saboteur` — static test design, edge cases as Jest/Vitest tests
+- `e2e-tester` — launches the app, drives Playwright, iterates until green
 
 ## Model assignment
 
@@ -25,11 +26,13 @@ Personas live in `~/.copilot/personas/*.md` machine-wide and in `.copilot/person
 | accessibility-reviewer | `claude-sonnet-4.6` | Quick passes against WCAG patterns |
 | new-engineer           | `claude-sonnet-4.6` | Reads code cold, flags unclear naming |
 | qa-saboteur            | `gpt-5.4-mini`      | Cheap, generates ugly user behaviour fast |
+| e2e-tester             | `claude-sonnet-4.6` | Strong tool-use + iteration loop; right balance for browser automation |
 
 ## When to dispatch the fleet
 
 - **Before code:** send the spec to `sceptical-architect`, `ux-critic`, and one domain persona (e.g. `data-engineer` if it touches storage). Argue, refine, then build.
 - **After code, before beta merge:** default fleet is `security-auditor`, `performance-reviewer`, `new-engineer`. Add `data-engineer` if the diff touches migrations or schemas. Add `ux-critic` and `accessibility-reviewer` if it touches anything user-facing. Add `qa-saboteur` before any release.
+- **Before merge to main / production:** also run `e2e-tester` — it launches the app, drives Playwright through the affected user journeys, captures screenshots, and iterates until the suite is green. This is the "did it actually work for a user?" gate, not just "did the code review pass?".
 
 ## Orchestration
 
