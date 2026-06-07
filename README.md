@@ -1,13 +1,131 @@
 # copilot-fleet-starter
 
-A reference setup for running a **persistent fleet of reviewer personas** on top of GitHub Copilot CLI. Drop these files into `~/.copilot/` and your next session inherits the whole team.
+**Your pull request gets one AI review, from one model, on whatever you happened to have selected. This gives it eleven.**
+
+Eleven specialists. Each pinned to the model that suits it. All running in parallel on the same diff, in their own context windows, none of them seeing what the others said. The bugs two of them flag without talking to each other are the ones that are actually broken.
+
+It runs on GitHub Copilot CLI. You drop these files into `~/.copilot/` and your next session inherits the whole team.
+
+## Why this exists
+
+One AI reviewer is a generalist on a default model. It is polite. Polite is the problem. It comments on your variable names and waves the leaky endpoint through, because everyone has an opinion on naming and security is harder.
+
+A real review board is not one reviewer. It is a security mind, an architect, a performance hawk, an engineer reading it cold, and someone who tries to break it. Different people. Different priorities. The disagreements are the point.
+
+This repo is that board, standing and named, so you stop inventing roles one prompt at a time.
+
+## What lands when you run it
+
+You point it at a diff. A few minutes later, one file:
+
+```
+# Fleet summary — PR-142
+
+## Triangulated (raised by 2+ personas — fix first)
+- [TRIANGULATED] auth/login.js:88 — token compared after the DB call, not before
+  (security-auditor, new-engineer)
+
+## Conflicts (you decide)
+- cache.js:40 — sceptical-architect wants the abstraction; performance-reviewer wants it inlined.
+
+## Out of scope (in the diff, not in the ticket)
+- README.md:12 — unrelated copy edit the ticket didn't ask for
+
+## Everything else, ranked
+### High
+- api/users.js:51 — N+1 query on the members list (performance-reviewer)
+```
+
+Eleven reviews collapsed into one. Triangulated bugs at the top. Disagreements kept open, not buried. Scope creep called out. You read one page, not eleven.
+
+## The team
+
+Eleven personas. Each one has a narrow lane, a pinned model, and a list of things it is **not** allowed to comment on, so it stays in its lane. Call the whole fleet with `/fleet`, or call one by name when you only need that one set of eyes.
+
+| Persona | Model | Lane | Call it when… |
+|---|---|---|---|
+| **security-auditor** | `gpt-5.3-codex` | Hostile input, auth order, secrets in logs, SSRF/SQLi/XSS | every diff that touches an endpoint, auth, or input handling |
+| **prompt-injection-reviewer** | `gpt-5.3-codex` | Untrusted text reaching a prompt, a tool call, or an output | the code builds a prompt, calls an LLM, or acts on model output |
+| **performance-reviewer** | `gpt-5.3-codex` | N+1 queries, allocations, wasted renders, hot loops | the diff touches a query, a list render, or a tight loop |
+| **sceptical-architect** | `claude-opus-4.7` | Design pushback, the abstraction you'll regret, coupling | before you build something structural, or before a big merge |
+| **data-engineer** | `claude-opus-4.7` | Schema, migrations, data contracts, backfills | the diff touches a migration, a schema, or a data shape |
+| **ux-ui-researcher** | `claude-opus-4.7` | The screen *before* code: user, job-to-be-done, wireframe | you're about to build UI and haven't designed it yet |
+| **ux-critic** | `claude-sonnet-4.6` | The built UI: what's confusing, in plain English | the diff changes something a user sees |
+| **accessibility-reviewer** | `claude-sonnet-4.6` | WCAG, keyboard nav, screen-reader, contrast | any user-facing change, before it ships |
+| **new-engineer** | `claude-haiku-4.5` | The cold read: unclear naming, missing context | always — it's cheap and catches what experts skim past |
+| **qa-saboteur** | `gpt-5.4-mini` | Edge cases written as **real failing tests** and run | before any release, if a test runner is wired |
+| **e2e-tester** | `claude-sonnet-4.6` | Launches the app, drives Playwright, iterates until green | before merge to main — the "did it work for a user?" gate |
+
+### How to call each one
+
+The whole fleet on a diff:
+
+```
+/fleet review the diff for PR-142 using the personas in ~/.copilot/personas/.
+Use the model pinned in AGENTS.md. Write each review to reviews/PR-142-<persona>.md,
+then write the Foreman summary to reviews/PR-142-SUMMARY.md.
+```
+
+One persona, by name (the orchestrator switches to its pinned model first):
+
+```
+# Security pass on a single file
+review backend/auth/login.js with security-auditor
+
+# Is this safe to feed an LLM?
+review the prompt builder in ai/chat.js with prompt-injection-reviewer
+
+# Design the screen before writing any code
+use ux-ui-researcher to design the team-invite screen from this spec: <paste spec>
+
+# Cold read for naming and clarity
+review this diff with new-engineer
+
+# Pushback before I commit to an abstraction
+ask sceptical-architect whether this caching layer is worth it
+
+# Turn the missed edge cases into failing tests and run them
+use qa-saboteur on PR-142
+
+# Drive the actual user journey end to end
+use e2e-tester to verify the signup flow on the local dev server
+```
+
+Mix and match. A migration PR might be `security-auditor` + `data-engineer` + `new-engineer`. A new screen might be `ux-ui-researcher` first (pre-build), then `ux-critic` + `accessibility-reviewer` after. You decide the cast; the model pinning is automatic.
+
+## Install (machine-wide, 2 minutes)
+
+```bash
+git clone https://github.com/sethiramicrosoft/copilot-fleet-starter.git
+cp copilot-fleet-starter/copilot-instructions.md ~/.copilot/
+cp copilot-fleet-starter/AGENTS.md ~/.copilot/
+cp -r copilot-fleet-starter/personas ~/.copilot/
+```
+
+Windows PowerShell:
+```powershell
+Copy-Item .\copilot-instructions.md $env:USERPROFILE\.copilot\
+Copy-Item .\AGENTS.md $env:USERPROFILE\.copilot\
+Copy-Item .\personas $env:USERPROFILE\.copilot\ -Recurse
+```
+
+Open a new GHCP CLI session — it auto-loads the global instructions. Then point the fleet at your next PR.
+
+### Optional: per-repo overrides
+
+```bash
+cp -r copilot-fleet-starter/repo-overlay/.github <your-repo>/
+```
+or run `/init` to generate one from scratch.
+
+---
 
 ## What this repo gives you
 
 ```
 ~/.copilot/
 ├── copilot-instructions.md   ← global house rules, auto-loaded every session
-├── AGENTS.md                  ← the fleet: cast + model-per-persona table
+├── AGENTS.md                  ← the fleet: cast + model-per-persona table + Foreman pass
 └── personas/
     ├── security-auditor.md
     ├── prompt-injection-reviewer.md ← LLM trust boundaries (untrusted text → prompt/tool/output)
@@ -46,43 +164,6 @@ Plus `repo-overlay/.github/copilot-instructions.md` — an example of repo-speci
 
 GHCP CLI gives you the **engine**. This repo is the **standing team** that runs on it.
 
-## Install (machine-wide, 2 minutes)
-
-```bash
-# Clone next to your home dir
-git clone https://github.com/sethiramicrosoft/copilot-fleet-starter.git
-# Copy the global setup into ~/.copilot/
-cp copilot-fleet-starter/copilot-instructions.md ~/.copilot/
-cp copilot-fleet-starter/AGENTS.md ~/.copilot/
-cp -r copilot-fleet-starter/personas ~/.copilot/
-```
-
-Windows PowerShell:
-```powershell
-Copy-Item .\copilot-instructions.md $env:USERPROFILE\.copilot\
-Copy-Item .\AGENTS.md $env:USERPROFILE\.copilot\
-Copy-Item .\personas $env:USERPROFILE\.copilot\ -Recurse
-```
-
-Open a new GHCP CLI session — it auto-loads the global instructions.
-
-## Optional: per-repo overrides
-
-Inside any repo:
-```bash
-cp -r copilot-fleet-starter/repo-overlay/.github <your-repo>/
-```
-or run `/init` to generate one from scratch.
-
-## Try the fleet on a real diff
-
-```
-/fleet review the diff for <ticket> using the personas in ~/.copilot/personas/.
-Use the model pinned in AGENTS.md. Write each review to reviews/<ticket>-<persona>.md.
-```
-
-Five to ten reviews land in `reviews/` in ~3–5 minutes, in parallel. Read them, pick what is real, ask the orchestrator to apply the fixes.
-
 ### Going past static review — launch the app
 
 `qa-saboteur` and `e2e-tester` are the two personas that don't stop at reading the diff:
@@ -92,12 +173,6 @@ Five to ten reviews land in `reviews/` in ~3–5 minutes, in parallel. Read them
 
 Wire either runner once per repo and the personas pick it up automatically on the next `/fleet` run.
 
-## References (GitHub docs)
-
-- [CLI best practices](https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices)
-- [Fleet](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/fleet)
-- [Autopilot](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/autopilot)
-
 ## What actually happens when you fire `/fleet`
 
 Most people picture `/fleet` as "the session switches model N times in sequence." It isn't. Each persona runs in its own isolated context window on its own pinned model, in true parallel:
@@ -105,6 +180,7 @@ Most people picture `/fleet` as "the session switches model N times in sequence.
 ```
 You ──► Orchestrator session (your /model, e.g. Sonnet 4.6)
             │
+            │  prints the roster (persona → model) and waits for go
             │  reads AGENTS.md model table
             │  spawns N sub-agents in parallel
             │
@@ -155,6 +231,12 @@ The Foreman runs on the orchestrator's own model — it is summarising, not revi
 ### What makes the model table *actually* binding
 
 The model table in `AGENTS.md` is only honoured automatically because `copilot-instructions.md` includes a hard rule that says *"on every persona invocation — fleet OR single — look up the pinned model in AGENTS.md first."* Without that rule, single-persona calls silently fall through to whatever `/model` happens to be active. With it, you can just say *"review architecture using sceptical-architect"* and the orchestrator will switch to Opus 4.7 before responding. See `copilot-instructions.md` in this repo.
+
+## References (GitHub docs)
+
+- [CLI best practices](https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices)
+- [Fleet](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/fleet)
+- [Autopilot](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/autopilot)
 
 ## License
 
