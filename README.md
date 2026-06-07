@@ -10,6 +10,7 @@ A reference setup for running a **persistent fleet of reviewer personas** on top
 ├── AGENTS.md                  ← the fleet: cast + model-per-persona table
 └── personas/
     ├── security-auditor.md
+    ├── prompt-injection-reviewer.md ← LLM trust boundaries (untrusted text → prompt/tool/output)
     ├── performance-reviewer.md
     ├── sceptical-architect.md
     ├── data-engineer.md
@@ -34,9 +35,12 @@ Plus `repo-overlay/.github/copilot-instructions.md` — an example of repo-speci
 - `/model`, `/plan`, `/add-dir`, Autopilot, auto-compaction
 
 **What this repo adds on top (discipline layer):**
-- A standing cast of ten named personas instead of inventing roles each time
+- A standing cast of eleven named personas instead of inventing roles each time
+- One of them (`prompt-injection-reviewer`) covers the LLM trust boundary that a plain security pass misses — for the increasing number of repos that call a model
 - Two of those personas (`qa-saboteur`, `e2e-tester`) actually execute tests — Jest / Playwright — rather than only reviewing code
 - A model-per-persona table so assignment is decided once
+- A **Foreman pass** that reads all the reviews and writes one summary — triangulating findings raised by 2+ personas, logging conflicts instead of hiding them, and flagging scope creep
+- A roster gate: the orchestrator prints which models it is about to run, before it spends them
 - A convention that each persona appends lessons learned back into its own file
 - A `reviews/<ticket>-<persona>.md` output convention so reviews survive the session
 
@@ -105,6 +109,7 @@ You ──► Orchestrator session (your /model, e.g. Sonnet 4.6)
             │  spawns N sub-agents in parallel
             │
             ├──► sub-agent: security-auditor    → gpt-5.3-codex        ──┐
+            ├──► sub-agent: prompt-injection    → gpt-5.3-codex        ──┤
             ├──► sub-agent: performance-reviewer→ gpt-5.3-codex        ──┤
             ├──► sub-agent: sceptical-architect → claude-opus-4.7      ──┤
             ├──► sub-agent: data-engineer       → claude-opus-4.7      ──┤  all
@@ -121,8 +126,20 @@ You ──► Orchestrator session (your /model, e.g. Sonnet 4.6)
                                                           │
             ┌─────────────────────────────────────────────┘
             ▼
-       Orchestrator collects results, shows you a summary
+       Orchestrator collects results, runs the Foreman pass,
+       and shows you one reviews/<ticket>-SUMMARY.md
 ```
+
+### The Foreman pass — one summary instead of eleven files
+
+Eleven reviews in `reviews/` is eleven files to read. After the sub-agents finish, the orchestrator runs one more pass — the **Foreman** — that reads the reports (not the code) and writes a single `reviews/<ticket>-SUMMARY.md`:
+
+- **Triangulation** — any finding raised independently by 2+ personas is promoted to the top and marked `[TRIANGULATED]`. Because the contexts are isolated, two personas landing on the same line without seeing each other is the strongest signal in the whole run. Fix those first.
+- **Conflict log** — when the architect and the performance reviewer disagree, both positions are recorded side by side. The Foreman never silently picks a winner; the call stays yours. A buried disagreement is worse than an open one.
+- **Scope check** — the Foreman compares the diff against the ticket and flags anything changed that the ticket did not ask for. No single persona watches for scope creep, because each one only sees its own lane.
+- **One ranked list** — everything else, merged and severity-ranked, with the persona that raised it in brackets.
+
+The Foreman runs on the orchestrator's own model — it is summarising, not reviewing.
 
 ### What this means in practice
 
@@ -130,7 +147,7 @@ You ──► Orchestrator session (your /model, e.g. Sonnet 4.6)
 |---|---|
 | **Model selection** | Each sub-agent process is launched with its pinned model from AGENTS.md. The orchestrator's own model is unaffected. |
 | **Context isolation** | Each sub-agent has its own clean context window. The security auditor doesn't see what the UX critic is thinking, and vice versa. This is deliberate — it prevents groupthink. The triangulation effect (3 personas independently finding the same bug) only works because contexts are isolated. |
-| **Parallelism** | True parallel, not round-robin. 10 personas don't take 10× one-persona time; they take ~max(individual times). Last live run: 5 personas → 2:22 wall clock vs. ~12 min if serial. |
+| **Parallelism** | True parallel, not round-robin. 11 personas don't take 11× one-persona time; they take ~max(individual times). Last live run: 5 personas → 2:22 wall clock vs. ~12 min if serial. |
 | **Failure isolation** | If Opus is rate-limited that minute, only the architect/security/e2e sub-agents fail. The others complete. You can re-run just the failed ones. |
 | **Cost** | Each sub-agent burns its own tokens at its own model's pricing. Opus calls cost Opus rates, Haiku calls cost Haiku rates. The cost math is what makes the model table valuable — you don't pay Opus for what Haiku can do. |
 | **Token bloat in main session** | Zero — sub-agents don't dump their full work into your main context. Only a brief summary lands in your session. This is why you can run `/fleet` 5× in one session without auto-compaction firing. |

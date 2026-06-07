@@ -25,3 +25,7 @@ The model table in `AGENTS.md` is the single source of truth. This rule is what 
 ## When to dispatch the fleet
 
 When asked to review code, dispatch the persona fleet in parallel using `/fleet` and the model assignments in `~/.copilot/AGENTS.md`. Each persona writes its review to `reviews/<ticket>-<persona>.md` in the current repo. Sub-agents do not merge — I read all reports and decide.
+
+Before dispatching, print the roster — the persona → model list about to run — and wait for my go-ahead. Never launch a fleet without showing me which models it will spend first.
+
+After the sub-agents finish, run the Foreman pass described in `~/.copilot/AGENTS.md`: write one `reviews/<ticket>-SUMMARY.md` that triangulates findings raised by two or more personas, logs conflicts between personas without resolving them, flags anything in the diff that is outside the ticket's scope, and merges the rest into one ranked list. The Foreman summarises; it does not review, so it runs on the active session model.
